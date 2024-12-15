@@ -1,0 +1,5 @@
+FROM python:3.9-slim
+RUN pip install --no-cache-dir mysql-connector-python
+WORKDIR /usr/src/app
+COPY etl_pipeline.py .
+CMD ["python", "etl_pipeline.py"]

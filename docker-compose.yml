@@ -1,0 +1,40 @@
+services:
+
+  # mysql
+ 
+  dataBase:
+    container_name: mysql-database
+    image: mysql:8.0
+    ports: 
+     - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: weather_data
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: user1
+    volumes:
+      - mysqlVolume:/var/lib/mysql
+    networks:
+      - mynetwork
+
+
+  # python
+
+  etlWorker:
+    image: mypy
+    container_name: etl_worker
+    restart: always
+    working_dir: /usr/src/app
+    command: ["python", "etl_pipeline.py"]
+    depends_on:
+      - dataBase
+    networks:
+      - mynetwork
+
+volumes:
+  mysqlVolume:
+  
+networks:
+  mynetwork:
+    driver: bridge
