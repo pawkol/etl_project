@@ -14,7 +14,7 @@ def createTable():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS weather_Warsaw (
         date DATE,
-        temperature FLOAT
+        temperature FLOATdocker rm 
         )
         """)   
 
