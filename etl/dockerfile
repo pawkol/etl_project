@@ -1,5 +1,11 @@
-FROM python:3.9-slim
-RUN pip install --no-cache-dir mysql-connector-python
+# debian based image
+FROM python:3.9-slim 
+RUN apt-get update 
+RUN apt-get install -y build-essential
+
+RUN pip install --no-cache-dir mysql-connector-python pandas requests
+RUN rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/app
 COPY etl_pipeline.py .
-CMD ["python", "etl_pipeline.py"]
+COPY tableCreation.py .

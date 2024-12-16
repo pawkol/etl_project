@@ -26,14 +26,34 @@ services:
     container_name: etl_worker
     restart: always
     working_dir: /usr/src/app
-    command: ["python", "etl_pipeline.py"]
+    command: ["python", "tableCreation.py"]
     depends_on:
-      - dataBase
+     - dataBase
     networks:
-      - mynetwork
+     - mynetwork
+
+
+# jenkins
+
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins:lts
+    restart: always
+    ports:
+     - "8080:8080"
+     - "50000:50000"
+    volumes:
+     - jenkinsVolume:/var/jenkins_home
+     - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+     - JENKINS_USER=admin
+     - JENKINS_PASS=admin
+    networks:
+     - mynetwork
 
 volumes:
   mysqlVolume:
+  jenkinsVolume:
   
 networks:
   mynetwork:
