@@ -59,6 +59,7 @@ x-airflow-common:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
+    - ./scripts:/opt/airflow/scripts
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     redis:
@@ -97,6 +98,8 @@ services:
     restart: always
     networks:
       - mynetwork
+    volumes:
+      - redis-volume
 
   airflow-webserver:
     <<: *airflow-common
@@ -166,7 +169,8 @@ services:
 
 volumes:
   postgres-db-volume:
+  redis-volume:
 
 networks:
   mynetwork:
-    driver: bridge
+    external: true
