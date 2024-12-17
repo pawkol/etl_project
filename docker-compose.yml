@@ -1,6 +1,6 @@
 services:
 
-  # mysql
+  # mysql - etl tests
  
   dataBase:
     container_name: mysql-database
@@ -18,43 +18,46 @@ services:
     networks:
       - mynetwork
 
-
-  # python
-
-  etlWorker:
-    image: mypy
-    container_name: etl_worker
+# PostgreSQL - Airflow data base
+  postgres:
+    image: postgres:15
+    container_name: airflow-postgres
     restart: always
-    working_dir: /usr/src/app
-    command: ["python", "tableCreation.py"]
-    depends_on:
-     - dataBase
-    networks:
-     - mynetwork
-
-
-# jenkins
-
-  jenkins:
-    container_name: jenkins
-    image: jenkins/jenkins:lts
-    restart: always
-    ports:
-     - "8080:8080"
-     - "50000:50000"
-    volumes:
-     - jenkinsVolume:/var/jenkins_home
-     - /var/run/docker.sock:/var/run/docker.sock
     environment:
-     - JENKINS_USER=admin
-     - JENKINS_PASS=admin
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow_db
+    volumes:
+      - postgresVolume:/var/lib/postgresql/data
     networks:
-     - mynetwork
+      - mynetwork
+
+  # Apache Airflow
+  airflow:
+    image: apache/airflow:2.8.1
+    container_name: airflow_container
+    restart: always
+    command: webserver
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow_db
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+      - ./logs:/usr/local/airflow/logs
+      - ./plugins:/usr/local/airflow/plugins
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+    depends_on:
+      - postgres
+      - dataBase
 
 volumes:
   mysqlVolume:
-  jenkinsVolume:
-  
+  postgresVolume:
+
 networks:
   mynetwork:
     driver: bridge
