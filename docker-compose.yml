@@ -20,7 +20,6 @@ services:
 
 volumes:
   mysqlVolume:
-  postgresVolume:
 
 networks:
   mynetwork:
