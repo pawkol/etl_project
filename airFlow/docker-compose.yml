@@ -99,7 +99,7 @@ services:
     networks:
       - mynetwork
     volumes:
-      - redis-volume
+      - redis-volume:/data
 
   airflow-webserver:
     <<: *airflow-common
