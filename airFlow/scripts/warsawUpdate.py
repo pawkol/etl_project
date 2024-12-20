@@ -9,24 +9,28 @@ def extract(api_url, api_key, city):
         'appid': api_key,
         'units': 'metric'
     }
-    response = requests.get(api_url, params=params)
+    response = requests.get(api_url, params=params, verify=False)
     response.raise_for_status()
+
     return response.json()
 
 def transform(data):
 
+    utc_date = datetime.fromtimestamp(data['dt']) 
     return {
-        'date': datetime.utcfromtimestamp(data['dt']).strftime('%Y-%m-%d %H:%M:%S'),
+        'date': utc_date.strftime('%Y-%m-%d %H:%M:%S'),
+        'hour': utc_date.strftime('%H:%M:%S'), 
         'temperature': data['main']['temp']
     }
 
-def load(db_config, weather_data):
+def load(db_config, weather_data, table):
 
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor()
+    table_name = table
 
-    insert_query = "INSERT INTO weather (date, temperature) VALUES (%s, %s)"
-    cursor.execute(insert_query, (weather_data['date'], weather_data['temperature']))
+    insert_query = f"INSERT INTO {table_name} (date, time, temperature) VALUES (%s,%s,%s)"
+    cursor.execute(insert_query, (weather_data['date'], weather_data['hour'], weather_data['temperature']))
 
     connection.commit()
     cursor.close()
@@ -35,8 +39,9 @@ def load(db_config, weather_data):
 def main():
 
     API_URL = "https://api.openweathermap.org/data/2.5/weather"
-    API_KEY = "apiKey"
+    API_KEY = "c0ea7de3a1b473500d570ea47cd19fd1"
     CITY = "Warsaw"
+    table = "weather_Warsaw"
 
     DB_CONFIG = {
         "host": "dataBase",
@@ -50,7 +55,7 @@ def main():
         raw_data = extract(API_URL, API_KEY, CITY)
         weather_data = transform(raw_data)
         print(f"Transformed data: {weather_data}")
-        load(DB_CONFIG, weather_data)
+        load(DB_CONFIG, weather_data,table)
 
 
     except Exception as e:

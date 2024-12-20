@@ -14,6 +14,7 @@ def createTable():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS weather_Warsaw (
         date DATE,
+        hour TIME,
         temperature FLOAT
         )
         """)   
