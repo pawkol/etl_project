@@ -39,7 +39,7 @@ def load(db_config, weather_data, table):
 def main():
 
     API_URL = "https://api.openweathermap.org/data/2.5/weather"
-    API_KEY = "c0ea7de3a1b473500d570ea47cd19fd1"
+    API_KEY = "apikey"     # paste your api key
     CITY = "Warsaw"
     table = "weather_Warsaw"
 

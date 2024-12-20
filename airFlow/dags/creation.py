@@ -16,4 +16,5 @@ run_script_task = BashOperator(
     dag=dag
 )
 
-run_script_task
+
+
