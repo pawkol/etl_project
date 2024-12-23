@@ -7,17 +7,21 @@ DB_CONFIG = {
     "database": "weather_data"
 }
 
+city = {"Warsaw", "Berlin", "Paris", "Barcelona"}
+
 def createTable():
     connection = mysql.connector.connect(**DB_CONFIG)
     cursor = connection.cursor()
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS weather_Warsaw (
-        date DATE,
-        hour TIME,
-        temperature FLOAT
-        )
-        """)   
+    for x in city:
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS weather_{x} (
+            id AUTO_INCREMENT PRIMARY KEY,
+            date DATE PRIMARY KEY,
+            hour TIME,
+            temperature FLOAT
+            )
+            """)   
 
     cursor.close()
     connection.close()

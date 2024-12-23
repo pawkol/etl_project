@@ -29,7 +29,7 @@ def load(db_config, weather_data, table):
     cursor = connection.cursor()
     table_name = table
 
-    insert_query = f"INSERT INTO {table_name} (date, time, temperature) VALUES (%s,%s,%s)"
+    insert_query = f"INSERT INTO {table_name} (date, hour, temperature) VALUES (%s,%s,%s)"
     cursor.execute(insert_query, (weather_data['date'], weather_data['hour'], weather_data['temperature']))
 
     connection.commit()
@@ -39,8 +39,8 @@ def load(db_config, weather_data, table):
 def main():
 
     API_URL = "https://api.openweathermap.org/data/2.5/weather"
-    API_KEY = "apikey"     # paste your api key
-    CITY = "Warsaw"
+    API_KEY = "c0ea7de3a1b473500d570ea47cd19fd1"     # paste your api key
+    CITY = {"Warsaw", "Berlin", "Paris", "Barcelona"}
     table = "weather_Warsaw"
 
     DB_CONFIG = {
@@ -50,16 +50,19 @@ def main():
         "database": "weather_data"
     }
 
-    try:
+    for x in CITY:
 
-        raw_data = extract(API_URL, API_KEY, CITY)
-        weather_data = transform(raw_data)
-        print(f"Transformed data: {weather_data}")
-        load(DB_CONFIG, weather_data,table)
+        table = f"weather_{x}"
+
+        try:
+            raw_data = extract(API_URL, API_KEY, x)
+            weather_data = transform(raw_data)
+            print(f"Transformed data: {weather_data}")
+            load(DB_CONFIG, weather_data,table)
 
 
-    except Exception as e:
-        print(f"Error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
