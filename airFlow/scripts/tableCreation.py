@@ -17,7 +17,7 @@ def createTable():
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS weather_{x} (
             id AUTO_INCREMENT PRIMARY KEY,
-            date DATE PRIMARY KEY,
+            date DATE,
             hour TIME,
             temperature FLOAT
             )
