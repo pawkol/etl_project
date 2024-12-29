@@ -11,7 +11,7 @@ with DAG(
 ) as dag:
     run_script_task = BashOperator(
         task_id='warsaw_data_update_dag_script',
-        bash_command='cd /opt/airflow/scripts/ && python warsawUpdate.py',
+        bash_command='cd /opt/airflow/scripts/ && python warsawUpdate.py'
     )
 
 
